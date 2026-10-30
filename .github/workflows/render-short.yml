@@ -1,0 +1,37 @@
+name: Render promotional Short
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'promo/make_short.py'
+      - '.github/workflows/render-short.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install tools and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-core fonts-dejavu-core
+          python -m pip install --user pillow numpy "qrcode[pil]"
+      - name: Render 18-second vertical video
+        run: python promo/make_short.py
+      - name: Validate output
+        run: |
+          test -s promo/output/MADA_Universal_Games_Short.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 promo/output/MADA_Universal_Games_Short.mp4
+      - name: Upload MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: MADA-Universal-Games-Short-MP4
+          path: promo/output/MADA_Universal_Games_Short.mp4
+          if-no-files-found: error
+          retention-days: 30
