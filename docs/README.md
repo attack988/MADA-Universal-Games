@@ -1,15 +1,18 @@
-# MADA project pages
+# MADA Universal Games — official project page
 
-The projects have **two separate presentation pages** (no mixed content):
+**This public repository contains MADA Universal Games**, an experimental Ubuntu desktop game launcher using Wine. The site, screenshots/illustrations, and installation instructions are dedicated to this game project.
 
-- **MADA Universal Games:** [docs/index.html](index.html) — Ubuntu game launcher, screenshots/illustrations, feature tour, installation commands.
-- **MADA Anywhere:** [docs/anywhere/index.html](anywhere/index.html) — cross-platform media app, platform requirements, download link and diagram.
+- [Games project README](../README.md)
+- [Games promotional website](index.html)
+- [Game UI illustrations](images/)
+- [Installation guide](../README.md#installation)
 
-These are static, bilingual Arabic/English HTML pages. On GitHub Pages choose **Settings → Pages → Deploy from a branch → main → /docs → Save**. After deployment, expected paths are:
+## Separate repository for MADA Anywhere
 
-- https://attack988.github.io/MADA-Universal-Games/
-- https://attack988.github.io/MADA-Universal-Games/anywhere/
+MADA Anywhere is a **different project** with its own public GitHub repository and website:
 
-The public repository still contains both projects because GitHub's connected integration cannot create a new repository. Creating a distinct repository for MADA Anywhere would be the next step for completely separate source ownership.
+**https://github.com/attack988/MADA-Anywhere**
 
-All the game graphics under docs/images are **illustrations**, not verified runtime screenshots. The MADA Anywhere page shows an original drawn mockup. GitHub Pages hosts only the static website, not a Python download backend.
+Its source code, downloads and separate website are maintained there, not under the Games website.
+
+The images under `docs/images` are project illustrations, not verified live application screenshots.

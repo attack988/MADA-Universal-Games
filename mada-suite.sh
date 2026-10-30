@@ -109,12 +109,12 @@ find_anywhere(){
       return 0
     fi
   done
-  # Public ZIP from the user's existing GitHub repository (no login needed).
+  # Public ZIP from the standalone MADA Anywhere repository (no login needed).
   if has curl && has unzip; then
     say 'Downloading MADA Anywhere from your public GitHub repository...'
     tmp="$(mktemp -d)"
     if curl --fail --location --silent --show-error \
-      'https://raw.githubusercontent.com/attack988/MADA-Universal-Games/main/apps/MADA-Anywhere/MADA_Anywhere_v2.zip' \
+      'https://raw.githubusercontent.com/attack988/MADA-Anywhere/main/MADA_Anywhere_v2.zip' \
       -o "$tmp/MADA_Anywhere_v2.zip" && unzip -q "$tmp/MADA_Anywhere_v2.zip" -d "$tmp"; then
       [[ -f "$tmp/MADA_Anywhere/server.py" ]] || { rm -rf "$tmp"; die 'Unexpected Anywhere download.'; }
       [[ ! -e "$ANYWHERE" ]] || die "Incomplete Anywhere folder exists: $ANYWHERE"
