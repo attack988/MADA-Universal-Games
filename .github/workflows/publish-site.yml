@@ -1,0 +1,47 @@
+name: Publish MADA project websites
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".github/workflows/publish-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "github-pages"
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish Games and Anywhere pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Verify both landing pages
+        shell: bash
+        run: |
+          test -s docs/index.html
+          test -s docs/anywhere/index.html
+          test -s docs/anywhere/preview.svg
+          test -s docs/site.css
+          test -s docs/images/interface-preview.svg
+          echo "Games and Anywhere website files are ready."
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
