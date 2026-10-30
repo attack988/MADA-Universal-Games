@@ -1,34 +1,87 @@
-# MADA Anywhere v2 — Cross-platform media manager
+<div align="center">
 
-**تطبيق عربي متعدد المنصات / Bilingual cross-platform app.** A standalone project inside this public repository, without altering the games project.
+<img src="../../docs/anywhere/preview.svg" width="850" alt="Illustration of the MADA Anywhere interface — not a live screenshot">
 
-[⬇️ Download the complete v2 source package](./MADA_Anywhere_v2.zip) · [SHA-256 checksum](./SHA256.txt)
+# MADA Anywhere
+### احفظ الوسائط المصرّح بها في مكان واحد · Your media, your choice
 
-## Supported platforms
+**واجهة أنيقة ومتجاوبة لتنزيل الصوت والفيديو من المصادر المدعومة، مع أدوات تحكم وسجل تنزيلات.**
 
-| System | User interface | Download engine |
-|---|---|---|
-| Ubuntu / Linux | Browser or installable PWA | Python + yt-dlp on device |
-| Windows | Browser or installable PWA | Python + yt-dlp on device |
-| macOS | Browser or installable PWA | Python + yt-dlp on device |
-| Android | Chrome/PWA | Termux locally or HTTPS server |
-| iPhone/iPad | Safari → Add to Home Screen | **Separate private HTTPS server required** |
+![Linux](https://img.shields.io/badge/Linux-Ubuntu-E95420?logo=ubuntu&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-Ready-0078D4?logo=windows&logoColor=white)
+![macOS](https://img.shields.io/badge/macOS-Ready-222222?logo=apple&logoColor=white)
+![Android](https://img.shields.io/badge/Android-PWA%20%2B%20Termux-3DDC84?logo=android&logoColor=white)
+![iOS](https://img.shields.io/badge/iOS-PWA%20%2B%20HTTPS%20server-555555?logo=apple&logoColor=white)
 
-This is not a native Android APK or iOS IPA. GitHub stores the files, **it does not host the yt-dlp processing backend**. iOS cannot run the downloader locally inside the PWA.
+[**🖼️ Preview website**](../../docs/anywhere/index.html) · [**📦 Download source ZIP**](./MADA_Anywhere_v2.zip) · [**🔒 SHA256**](./SHA256.txt)
 
-## Quick start / التشغيل
+*Preview above is an original SVG illustration, not a screenshot from a tested video download.*
 
-- Ubuntu/Linux: `bash install_ubuntu_mac.sh && bash start_ubuntu_mac.sh` (install Python 3.11+, FFmpeg first).
-- macOS: Same commands after installing Python 3.11+, FFmpeg, Node.js via Homebrew.
-- Windows: Run `install_windows.bat` then `start_windows.bat` (install Python 3.11+ first).
-- Android: Open Termux and run `bash install_android_termux.sh && bash start_android_termux.sh`.
-- Local UI: `http://127.0.0.1:8787`.
-- iPhone/remote devices: host the included `web/` directory on HTTPS and run `server.py` in a private HTTPS environment; configure **backend URL and access token** in Settings. For deployment use included `Dockerfile`, `compose.yaml` and `.env.example`.
+</div>
 
-## Security & reliability
+---
 
-Create a unique secret `MADA_API_TOKEN` (at least 24 characters) and configure `MADA_ALLOWED_ORIGINS` to the static website origin. Use an HTTPS reverse proxy; do not expose port 8787 publicly. Never commit `.env` or private keys. Remote playback links use signed temporary tickets. The browser UI and backend must be separately hosted for remote mobile access.
+## 🇸🇦 العربية
 
-Media processing depends on each site's supported formats and policies. MP3 and HD merging require FFmpeg. This app does not bypass DRM. Download only content you own or have permission to save. 9 local automated tests passed before publication; compatibility with live sites and each device has not been exhaustively validated.
+**MADA Anywhere** تطبيق تجريبي بواجهة عربية وإنجليزية لإدارة تنزيلات الوسائط التي يحق لك حفظها. يتعامل مع الروابط المدعومة بواسطة `yt-dlp`، مع اختيار الصيغة والجودة عند توفرها. لا يتجاوز حماية DRM.
 
-**Version 2.0 — 2026-10-30.**
+### ✨ المميزات
+
+| الميزة | التفاصيل |
+|:--|:--|
+| 🔗 تحليل الروابط | عنوان الفيديو وصورته والمعلومات المتاحة من الموقع |
+| 🎥 الفيديو والصوت | MP4 / MP3 / M4A حسب المصدر وFFmpeg |
+| 📊 التنزيلات | تقدم التحميل، قائمة المهام وإعادة المحاولة |
+| 🌗 التصميم | دعم العربية والإنجليزية وواجهة متجاوبة |
+| 🔐 الاتصال البعيد | خادم خاص برمز وصول عبر HTTPS |
+| 📱 الهاتف | واجهة PWA؛ تشغيل المحرك يختلف حسب النظام |
+
+### 🖥️ تشغيل Ubuntu
+
+إذا كنت تستخدم **MADA Suite** يمكنك تشغيل برنامجي الألعاب والتنزيلات معًا:
+
+```bash
+curl -fsSLo ~/mada-suite.sh https://raw.githubusercontent.com/attack988/MADA-Universal-Games/main/mada-suite.sh
+bash ~/mada-suite.sh setup
+~/.local/bin/mada start
+```
+
+للتشغيل المستقل، فك ضغط الملف ثم نفّذ من داخل مجلده:
+
+```bash
+bash install_ubuntu_mac.sh
+bash start_ubuntu_mac.sh
+```
+
+افتح `http://127.0.0.1:8787`، وثبّت FFmpeg مسبقًا عند الحاجة لدمج الصوت والفيديو أو إنتاج MP3.
+
+### 🌍 الأنظمة الأخرى
+
+| النظام | الواجهة | محرك التحميل |
+|:--|:--|:--|
+| Ubuntu / Linux | متصفح / PWA | Python محلي |
+| Windows | متصفح / PWA | Python محلي |
+| macOS | متصفح / PWA | Python محلي |
+| Android | Chrome / PWA | Termux أو خادم خاص |
+| iPhone / iPad | Safari / PWA | **خادم HTTPS خارجي ضروري** |
+
+**مهم:** هذا ليس ملف APK أو IPA أصليًا، وGitHub Pages لا يقوم بتشغيل خادم Python. للتنزيل عبر الإنترنت من iPhone، استضف محرك التنزيل بنفسك بشكل آمن، ثم اربط الواجهة بخادم HTTPS محمي. لا تنشر مفاتيح `.env` ولا تفتح الخادم للعامة دون مصادقة.
+
+---
+
+## 🇬🇧 English
+
+MADA Anywhere is an experimental cross-platform media download manager. It offers link inspection, supported audio/video formats, a job queue, progress tracking, and a responsive Arabic/English PWA.
+
+**Quick start:** Download and extract the source ZIP. On Linux/macOS run `bash install_ubuntu_mac.sh && bash start_ubuntu_mac.sh` after setting up Python 3.11+ and FFmpeg. On Windows run `install_windows.bat`, then `start_windows.bat`. On Android use the included Termux scripts.
+
+**Remote use:** Browser UI can run anywhere, but download processing requires a private Python backend over HTTPS. iPhone/iPad do not run yt-dlp natively inside the PWA. Supported sites and live download behavior vary; no bypass of DRM is provided. Download only media you are authorized to save.
+
+### 📂 Project links
+
+- [Original application package](./MADA_Anywhere_v2.zip)
+- [Illustrated project page](../../docs/anywhere/index.html)
+- [GitHub Pages publishing workflow](../../.github/workflows/publish-site.yml)
+- [Unified MADA Suite launcher](../../mada-suite.sh)
+
+**Stage:** experimental (v2). Local tests do not guarantee compatibility with every video source or platform.
