@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="t d">
+<title id="t">MADA Universal Games interface illustration</title><desc id="d">Conceptual illustration based on the launcher user interface; not a real screenshot.</desc>
+<rect width="1200" height="720" fill="#0b1020"/><rect x="38" y="40" width="1124" height="624" rx="22" fill="#101522" stroke="#415479" stroke-width="3"/>
+<rect x="38" y="40" width="1124" height="48" rx="22" fill="#1b263c"/><rect x="38" y="66" width="1124" height="23" fill="#1b263c"/><circle cx="75" cy="64" r="8" fill="#ee6b74"/><circle cx="102" cy="64" r="8" fill="#e9c16d"/><circle cx="129" cy="64" r="8" fill="#7dd7a7"/><text x="592" y="71" font-family="DejaVu Sans,Arial" font-size="16" text-anchor="middle" fill="#bcd0f1">MADA Universal Games v2</text>
+<text x="87" y="150" font-family="DejaVu Sans,Arial" font-size="30" font-weight="700" fill="#91b7ff">MADA / UNIVERSAL GAMES</text><rect x="988" y="110" width="118" height="49" rx="10" fill="#263653" stroke="#425478"/><text x="1048" y="141" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="20" fill="#fff">English</text>
+<text x="87" y="186" font-family="DejaVu Sans,Arial" font-size="19" fill="#d3deef">Windows game library for Ubuntu • Wine</text>
+<rect x="84" y="214" width="1032" height="190" rx="14" fill="#182238" stroke="#34435e"/><rect x="105" y="237" width="990" height="58" rx="10" fill="#355d9f"/><text x="129" y="273" font-family="DejaVu Sans,Arial" font-size="22" fill="#fff">Example Game</text><text x="129" y="339" font-family="DejaVu Sans,Arial" font-size="20" fill="#b8cce6">Your game library appears here</text>
+<text x="88" y="442" font-family="DejaVu Sans,Arial" font-size="17" fill="#abc2e4">/home/ubuntu/Games/ExampleGame/Game.exe</text>
+<g font-family="DejaVu Sans,Arial" font-size="19" fill="#eff4ff" text-anchor="middle">
+<rect x="84" y="467" width="326" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="247" y="501">Add EXE</text>
+<rect x="437" y="467" width="326" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="600" y="501">Add folder</text>
+<rect x="790" y="467" width="326" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="953" y="501">Import archive</text>
+<rect x="84" y="537" width="238" height="56" rx="10" fill="#3563a4"/><text x="203" y="571">Play</text>
+<rect x="342" y="537" width="238" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="461" y="571">Wine settings</text>
+<rect x="600" y="537" width="238" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="719" y="571">Launch options</text>
+<rect x="858" y="537" width="258" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="987" y="571">Game logs</text></g>
+<text x="604" y="696" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="17" fill="#9ab0ce">Illustrative preview — not a captured application screenshot</text></svg>
