@@ -35,6 +35,10 @@ MADA Universal Games is an experimental, open-source-style Python/PyQt6 desktop 
 - Keep a separate Wine prefix for every game.
 - Set launch arguments and open `winecfg`.
 - View game logs, rename entries, and remove games from the library without deleting the files.
+- **Check / fix requirements:** inspect game EXEs and recent Wine errors for .NET/Wine Mono, XNA, Visual C++ and DirectX 9 clues.
+- Download **Wine Mono from WineHQ** and install it into the selected game's Wine prefix after an explicit confirmation.
+- Optionally install selected Windows runtime components via **Winetricks** (separate package, not installed by default).
+- Detect common redistributable installers accidentally selected as the game executable and warn before adding them.
 - Local library metadata stored in `~/.config/mada-universal-games/library.json`.
 
 ### Requirements
@@ -73,7 +77,11 @@ After installation, launch **MADA Universal Games** from the Ubuntu application 
 2. Choose **Add EXE**, **Add folder**, or **Import archive**.
 3. For folders/archives, select the actual game executable rather than an uninstaller.
 4. Select your game and press **Play**. A separate Wine prefix will be created for it as required.
-5. If a game does not launch, check **Game logs** and **Wine settings**.
+5. If a game does not launch, click **Check / fix requirements**. Review the detected clues and explicitly approve a suggested component. Try the game again afterward.
+6. If the log mentions `Wine Mono is not installed`, select **Wine Mono** first. Installation downloads the official MSI over HTTPS to `~/.cache/mada-universal-games` and runs it in that game's isolated prefix.
+7. For **XNA 4, Visual C++ 2019, DirectX 9, or native .NET 4.0**, first install Winetricks if it is not present: `sudo apt install winetricks`. The launcher asks for consent before running any Winetricks verb.
+
+> **Compatibility:** Windows components do not work in every Wine version. Native .NET Framework installation may replace Wine Mono and affect existing games in that prefix. Back up important prefix data before advanced changes. No packages, dependencies, or game files are installed without your approval. Detection is heuristic, not an exhaustive compatibility scan.
 
 ### Updating an existing installation
 
@@ -90,7 +98,7 @@ This refreshes the installed launcher; game library metadata and existing game f
 - **`apt update` fails:** inspect and repair any broken third-party APT repositories first. Do not disable signature verification.
 - **PyQt6 missing:** run the installer again and ensure `python3-pyqt6` is installed.
 - **Wine not installed:** install `wine` from your Ubuntu repository or consult WineHQ for your exact Ubuntu release.
-- **Game crashes or will not start:** inspect its log, check whether the game needs additional dependencies, and verify Wine compatibility.
+- **Game crashes or will not start:** click **Check / fix requirements** to inspect the latest Wine errors. The log now retains error messages instead of suppressing them; Vulkan/driver warnings alone are not proof of failure.
 - **Arabic text looks wrong:** install `fonts-noto-core` and restart the application. Arabic RTL handling applies to the *launcher*, not to text inside games.
 
 ### Safety and project status
@@ -113,6 +121,9 @@ This refreshes the installed launcher; game library metadata and existing game f
 - إنشاء بيئة Wine مستقلة لكل لعبة.
 - تخصيص أوامر التشغيل وفتح إعدادات Wine.
 - عرض سجل الأخطاء وإعادة تسمية الألعاب وإزالتها من القائمة دون حذف ملفات اللعبة.
+- زر **🧰 فحص وإصلاح المتطلبات** للتعرّف على مؤشرات نقص Wine Mono و.NET وXNA وVisual C++ وDirectX.
+- تنزيل Wine Mono من المصدر الرسمي وتثبيته في بيئة Wine للعبة المحددة بعد موافقتك.
+- تثبيت مكونات Windows الأخرى عند اختيارها باستخدام Winetricks، مع تحذير عند اختيار ملف تثبيت متطلبات بدل ملف اللعبة.
 - حفظ بيانات المكتبة محليًا على جهازك.
 
 ### المتطلبات
@@ -151,7 +162,11 @@ chmod +x install.sh
 2. اضغط **إضافة EXE** أو **إضافة مجلد** أو **استيراد RAR/ZIP**.
 3. اختر ملف تشغيل اللعبة الصحيح، وليس ملف إزالة التثبيت.
 4. اختر اللعبة من القائمة واضغط **تشغيل**.
-5. عند حدوث مشكلة، افتح **سجل الأخطاء** ثم **إعدادات Wine**.
+5. إذا لم تعمل اللعبة، اضغط **🧰 فحص وإصلاح المتطلبات** لعرض الرسائل واختيار المكوّن المقترح.
+6. إذا ظهرت رسالة `Wine Mono is not installed`، جرّب **Wine Mono** أولًا، وافق على التنزيل والتثبيت، ثم شغّل اللعبة مجددًا.
+7. للتثبيت المتقدم مثل XNA و.NET الأصلي استخدم `sudo apt install winetricks` إن لم يكن مثبتًا.
+
+> **تنبيه:** فحص المتطلبات يعتمد على مؤشرات من ملف اللعبة والسجل، ولا يضمن نجاح كل لعبة. لا يتم تثبيت أي شيء دون الموافقة. قد يُغيّر تثبيت .NET الأصلي إعدادات Wine Mono؛ احتفظ بنسخة احتياطية من ملفاتك المهمة قبل التجربة.
 
 ### تحديث البرنامج
 
