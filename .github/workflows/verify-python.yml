@@ -5,13 +5,13 @@ on:
       - "mada_games.py"
       - "mada_requirements.py"
       - "update.sh"
-      - "update.sh"
       - "tests/**"
       - ".github/workflows/verify-python.yml"
   pull_request:
     paths:
       - "mada_games.py"
       - "mada_requirements.py"
+      - "update.sh"
       - "tests/**"
       - ".github/workflows/verify-python.yml"
 jobs:
