@@ -5,9 +5,12 @@ import uuid
 import shlex
 import shutil
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, QProcess
+import mada_requirements as requirements
+
+from PyQt6.QtCore import Qt, QProcess, QTimer
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -127,6 +130,7 @@ class Launcher(QMainWindow):
         actions2 = QHBoxLayout()
         self.add_button(actions2, self.tr("▶ تشغيل", "▶ Play"), self.play)
         self.add_button(actions2, self.tr("إعدادات Wine", "Wine settings"), self.wine_settings)
+        self.add_button(actions2, self.tr("🧰 فحص وإصلاح المتطلبات", "🧰 Check / fix requirements"), self.requirements_dialog)
         self.add_button(actions2, self.tr("خيارات التشغيل", "Launch options"), self.edit_args)
         self.add_button(actions2, self.tr("سجل الأخطاء", "Game logs"), self.show_log)
         layout.addLayout(actions2)
@@ -219,6 +223,19 @@ class Launcher(QMainWindow):
         if not exe.exists():
             self.alert(self.tr("الملف غير موجود", "File not found"))
             return
+        if requirements.installer_name(exe):
+            answer = QMessageBox.question(
+                self, "MADA", self.tr(
+                    "يبدو أنك اخترت مثبّتًا مساعدًا (.NET / DirectX / VC++) وليس اللعبة. "
+                    "هل تريد إضافته على أي حال؟",
+                    "This looks like a dependency installer (.NET / DirectX / VC++), "
+                    "not the game. Add it anyway?"
+                ),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
+            if answer != QMessageBox.StandardButton.Yes:
+                return
         game = {
             "id": uuid.uuid4().hex,
             "name": name or exe.stem,
@@ -243,11 +260,13 @@ class Launcher(QMainWindow):
             p for p in Path(folder).rglob("*")
             if p.is_file() and p.suffix.lower() == ".exe"
         ]
-        bad = ("unins", "crashhandler", "vcredist", "dxsetup")
+        bad = ("unins", "crashhandler", "vcredist", "vc_redist", "dxsetup",
+               "dxwebsetup", "dotnetfx", "oalinst", "unitycrashhandler")
         preferred = [
             p for p in files
             if not p.name.lower().startswith(bad)
             and "redist" not in str(p).lower()
+            and ".venv" not in p.parts
         ]
         return sorted(preferred or files, key=lambda p: p.name.lower())
 
@@ -313,7 +332,7 @@ class Launcher(QMainWindow):
     def environment(self, game):
         env = os.environ.copy()
         env["WINEPREFIX"] = str(PREFIXES / game["id"])
-        env["WINEDEBUG"] = "-all"
+        env["WINEDEBUG"] = "-all,err+all"
         return env
 
     def play(self):
@@ -347,7 +366,10 @@ class Launcher(QMainWindow):
         try:
             arguments = shlex.split(game.get("args", ""))
             with logfile.open("a", encoding="utf-8") as log:
-                subprocess.Popen(
+                log.write("\n" + requirements.LAUNCH_MARKER + " "
+                          + datetime.now().isoformat(timespec="seconds") + "\n")
+                log.flush()
+                process = subprocess.Popen(
                     ["wine", str(exe), *arguments],
                     cwd=str(exe.parent),
                     env=self.environment(game),
@@ -355,11 +377,186 @@ class Launcher(QMainWindow):
                     stderr=subprocess.STDOUT,
                     start_new_session=True
                 )
+            QTimer.singleShot(
+                6000,
+                lambda game_id=game["id"], exe_path=str(exe), process=process,
+                       path=logfile: self.check_launch_error(game_id, exe_path, process, path)
+            )
             self.statusBar().showMessage(
                 self.tr("بدأ تشغيل اللعبة", "Game launched"), 5000
             )
         except Exception as error:
             self.alert(str(error))
+
+    def check_launch_error(self, game_id, exe_path, process, logfile):
+        """Offer help after a quickly failed launch when a known error appears."""
+        if process.poll() is None:
+            return
+        game = self.current()
+        if not game or game["id"] != game_id:
+            return
+        problems = requirements.diagnose(exe_path, logfile)
+        if "mono" not in problems and "xna40" not in problems:
+            return
+        answer = QMessageBox.question(
+            self, "MADA",
+            self.tr(
+                "وجدت رسالة تشير إلى مكوّن ناقص بعد محاولة التشغيل. "
+                "هل تريد فحص المتطلبات وإصلاحها؟",
+                "The game log suggests a missing component. "
+                "Open the requirements assistant?"
+            ),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes
+        )
+        if answer == QMessageBox.StandardButton.Yes:
+            self.requirements_dialog()
+
+    def requirements_dialog(self):
+        """Show diagnostic hints and install only a component approved by the user."""
+        game = self.current()
+        if not game:
+            return
+        dialog = QDialog(self)
+        dialog.setWindowTitle(self.tr("متطلبات اللعبة", "Game requirements"))
+        dialog.resize(740, 550)
+        layout = QVBoxLayout(dialog)
+        hints = requirements.diagnose(
+            game["exe"], LOGS / (game["id"] + ".log")
+        )
+        text_ar = {
+            "mono": "● السجل يشير إلى غياب Wine Mono (بديل .NET في Wine).",
+            "managed": "● ملف اللعبة يستخدم .NET؛ قد يحتاج Wine Mono.",
+            "xna40": "● السجل يشير إلى Microsoft XNA Framework.",
+            "vcrun2019": "● السجل يشير إلى مكتبات Visual C++.",
+            "d3dx9": "● السجل يشير إلى ملفات DirectX 9."
+        }
+        text_en = {
+            "mono": "● Log indicates missing Wine Mono (.NET replacement).",
+            "managed": "● Game executable uses .NET; Wine Mono may be needed.",
+            "xna40": "● Log mentions Microsoft XNA Framework.",
+            "vcrun2019": "● Log mentions Visual C++ libraries.",
+            "d3dx9": "● Log mentions DirectX 9 components."
+        }
+        description = QLabel(
+            "\n".join((text_ar if self.db["language"] == "ar" else text_en)[key]
+                      for key in hints)
+            or self.tr("لم يُكتشف مكوّن ناقص محدد. يمكنك اختيار تثبيت مكوّن يدويًا.",
+                       "No specific missing component was identified. "
+                       "You may choose an optional component.")
+        )
+        description.setWordWrap(True)
+        layout.addWidget(description)
+
+        notice = QLabel(self.tr(
+            "كل عملية تخص هذه اللعبة فقط. قد تحتاج إلى إنترنت. "
+            "تثبيت .NET الأصلي قد يحل محل Wine Mono ويؤثر في التوافق. "
+            "لا يتم تنزيل أو تثبيت شيء دون موافقتك.",
+            "Each repair applies only to this game's Wine prefix. Internet may be required. "
+            "Native .NET can replace Wine Mono and affect compatibility. "
+            "Nothing is downloaded or installed without your approval."
+        ))
+        notice.setWordWrap(True)
+        layout.addWidget(notice)
+
+        packages = QComboBox()
+        packages.addItem("Wine Mono (recommended first)", "mono")
+        packages.addItem(".NET Framework 4.0 (Winetricks / advanced)", "dotnet40")
+        packages.addItem("Microsoft XNA Framework 4.0 (Winetricks)", "xna40")
+        packages.addItem("Visual C++ 2019 (Winetricks)", "vcrun2019")
+        packages.addItem("DirectX 9 (Winetricks)", "d3dx9")
+        priority = next((x for x in hints if x in
+                         ("mono", "xna40", "vcrun2019", "d3dx9")), "mono")
+        packages.setCurrentIndex(
+            next(i for i in range(packages.count())
+                 if packages.itemData(i) == priority)
+        )
+        layout.addWidget(packages)
+
+        output = QPlainTextEdit()
+        output.setReadOnly(True)
+        output.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        output.setPlainText(requirements.recent_log(
+            LOGS / (game["id"] + ".log"))[-9000:]
+            or self.tr("لم يتم تسجيل أخطاء بعد.", "No game errors logged yet."))
+        layout.addWidget(output, 1)
+
+        actions = QHBoxLayout()
+        install_button = QPushButton(self.tr("تثبيت المحدد", "Install selected"))
+        close_button = QPushButton(self.tr("إغلاق", "Close"))
+        actions.addWidget(install_button)
+        actions.addWidget(close_button)
+        layout.addLayout(actions)
+        close_button.clicked.connect(dialog.accept)
+
+        def start_install():
+            component = packages.currentData()
+            if component != "mono" and not shutil.which("winetricks"):
+                self.alert(self.tr(
+                    "Winetricks غير مثبت. نفّذ أولًا: sudo apt install winetricks",
+                    "Winetricks is missing. First run: sudo apt install winetricks"
+                ))
+                return
+            warning = self.tr(
+                "سيتم تنزيل وتثبيت " + str(packages.currentText()) +
+                " داخل بيئة Wine الخاصة بهذه اللعبة. قد يغير توافقها. هل توافق؟",
+                "Download and install " + str(packages.currentText()) +
+                " into this game's Wine prefix? This can change compatibility. Continue?"
+            )
+            if QMessageBox.question(
+                dialog, "MADA", warning,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            ) != QMessageBox.StandardButton.Yes:
+                return
+            install_button.setEnabled(False)
+            close_button.setEnabled(False)
+            packages.setEnabled(False)
+            output.clear()
+            output.appendPlainText(self.tr(
+                "بدأ تثبيت المتطلب. لا تغلق البرنامج أثناء التثبيت...",
+                "Installing component. Keep MADA open until it finishes..."
+            ))
+            proc = QProcess(dialog)
+            proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
+            dialog._installer = proc
+
+            def output_ready():
+                content = bytes(proc.readAllStandardOutput()).decode(
+                    "utf-8", errors="replace"
+                )
+                if content:
+                    output.insertPlainText(content)
+                    output.ensureCursorVisible()
+
+            def finished(code, status):
+                output_ready()
+                install_button.setEnabled(True)
+                close_button.setEnabled(True)
+                packages.setEnabled(True)
+                if code == 0 and status == QProcess.ExitStatus.NormalExit:
+                    output.appendPlainText(self.tr(
+                        "\n✅ اكتمل التثبيت. جرّب تشغيل اللعبة الآن.",
+                        "\n✅ Installation finished. Try playing the game."
+                    ))
+                else:
+                    output.appendPlainText(self.tr(
+                        "\n❌ تعذر إكمال التثبيت. راجع التفاصيل أعلاه.",
+                        "\n❌ Installation failed. Review the output above."
+                    ))
+                dialog._installer = None
+
+            proc.readyReadStandardOutput.connect(output_ready)
+            proc.finished.connect(finished)
+            proc.start(
+                sys.executable, [
+                    str(Path(__file__).with_name("mada_requirements.py")),
+                    "install", component, str(PREFIXES / game["id"])
+                ]
+            )
+
+        install_button.clicked.connect(start_install)
+        dialog.exec()
 
     def wine_settings(self):
         game = self.current()
