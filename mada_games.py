@@ -77,8 +77,8 @@ class Launcher(QMainWindow):
             Qt.LayoutDirection.RightToLeft if arabic
             else Qt.LayoutDirection.LeftToRight
         )
-        self.setWindowTitle("MADA Universal Games v2")
-        self.setMinimumSize(950, 610)
+        self.setWindowTitle("MADA Universal Games v2.1")
+        self.setMinimumSize(950, 660)
 
         root = QWidget()
         layout = QVBoxLayout(root)
@@ -106,6 +106,15 @@ class Launcher(QMainWindow):
         ))
         layout.addWidget(subtitle)
 
+        # Keep the requirements action prominent and visible even at minimum width.
+        self.repair_button = QPushButton(self.tr(
+            "🧰 فحص وإصلاح متطلبات اللعبة المحددة",
+            "🧰 Check and repair selected game's requirements"
+        ))
+        self.repair_button.setObjectName("repairButton")
+        self.repair_button.clicked.connect(self.requirements_dialog)
+        layout.addWidget(self.repair_button)
+
         self.game_list = QListWidget()
         for game in self.db["games"]:
             self.game_list.addItem(game["name"])
@@ -130,7 +139,6 @@ class Launcher(QMainWindow):
         actions2 = QHBoxLayout()
         self.add_button(actions2, self.tr("▶ تشغيل", "▶ Play"), self.play)
         self.add_button(actions2, self.tr("إعدادات Wine", "Wine settings"), self.wine_settings)
-        self.add_button(actions2, self.tr("🧰 فحص وإصلاح المتطلبات", "🧰 Check / fix requirements"), self.requirements_dialog)
         self.add_button(actions2, self.tr("خيارات التشغيل", "Launch options"), self.edit_args)
         self.add_button(actions2, self.tr("سجل الأخطاء", "Game logs"), self.show_log)
         layout.addLayout(actions2)
@@ -169,6 +177,14 @@ class Launcher(QMainWindow):
                 font-weight: 600;
             }
             QPushButton:hover { background: #36517f; }
+            QPushButton#repairButton {
+                background: #186554;
+                border: 1px solid #4ec5ab;
+                font-weight: 800;
+                padding: 14px;
+                font-size: 15px;
+            }
+            QPushButton#repairButton:hover { background: #217d69; }
             QListWidget {
                 background: #182238;
                 border: 1px solid #34435e;

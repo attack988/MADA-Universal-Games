@@ -4,12 +4,14 @@ on:
     paths:
       - "mada_games.py"
       - "mada_requirements.py"
+      - "update.sh"
       - "tests/**"
       - ".github/workflows/verify-python.yml"
   pull_request:
     paths:
       - "mada_games.py"
       - "mada_requirements.py"
+      - "update.sh"
       - "tests/**"
       - ".github/workflows/verify-python.yml"
 jobs:
@@ -22,5 +24,7 @@ jobs:
           python-version: "3.12"
       - name: Compile launcher and helper
         run: python -m py_compile mada_games.py mada_requirements.py
+      - name: Validate updater shell syntax
+        run: bash -n update.sh
       - name: Test requirements detection without Wine
         run: python -m unittest discover -s tests -v

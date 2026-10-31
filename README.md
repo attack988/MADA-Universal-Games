@@ -85,11 +85,18 @@ After installation, launch **MADA Universal Games** from the Ubuntu application 
 
 ### Updating an existing installation
 
+Close the app, then update without repeating the system package installation:
+
 ```bash
-cd MADA-Universal-Games
+cd ~/MADA-Universal-Games
 git pull --ff-only
-./install.sh
+bash update.sh
+~/.local/share/mada-universal-games/run.sh
 ```
+
+The updated v2.1 window has a prominent green **🧰 Check and repair selected game's requirements** button directly above the game library. If the button is missing, confirm that the running installation at `~/.local/share/mada-universal-games/mada_games.py` has been refreshed, and close any older app process before restarting.
+
+If this is the first installation or required system packages are absent, run `bash install.sh` instead.
 
 This refreshes the installed launcher; game library metadata and existing game folders live outside the repository. Back up important files before upgrading.
 
@@ -170,13 +177,16 @@ chmod +x install.sh
 
 ### تحديث البرنامج
 
-من مجلد المشروع الذي استنسخته سابقًا:
+أغلق البرنامج أولًا، ثم نفّذ هذه الأوامر لتحديث ملفاته دون إعادة تثبيت الحزم:
 
 ```bash
-cd MADA-Universal-Games
+cd ~/MADA-Universal-Games
 git pull --ff-only
-./install.sh
+bash update.sh
+~/.local/share/mada-universal-games/run.sh
 ```
+
+في إصدار v2.1، يظهر زر أخضر واضح **🧰 فحص وإصلاح متطلبات اللعبة المحددة** أعلى قائمة الألعاب. إذا لم يظهر، تأكد من تحديث النسخة المثبتة وإغلاق النافذة القديمة. إذا كان MADA غير مثبت سابقًا، استخدم `bash install.sh`.
 
 لا يُفترض أن يحذف التحديث مكتبة ألعابك؛ ملفاتها وإعداداتها محفوظة خارج مجلد المستودع. يُفضّل نسخ البيانات المهمة احتياطيًا قبل أي تحديث.
 
