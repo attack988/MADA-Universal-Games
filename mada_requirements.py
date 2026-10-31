@@ -4,6 +4,7 @@ This module has no PyQt dependency, so its detection can be tested headlessly.
 Every installation is explicitly requested from the launcher UI.
 """
 import os
+import hashlib
 import re
 import shutil
 import struct
@@ -14,6 +15,7 @@ from pathlib import Path
 
 MONO_VERSION = "11.3.0"
 MONO_FILE = f"wine-mono-{MONO_VERSION}-x86.msi"
+MONO_SHA256 = "df2dfc1665c2511882e7cabd56eafd0c0a3d94e5a7e86f969277f6c189d418d3"
 MONO_URL = f"https://dl.winehq.org/wine/wine-mono/{MONO_VERSION}/{MONO_FILE}"
 MONO_RELEASES = "https://github.com/wine-mono/wine-mono/releases"
 WINETRICKS_VERBS = {
@@ -72,7 +74,7 @@ def diagnose(exe_path, log_path):
         found.append("mono")
     if ("microsoft.xna.framework" in messages or "xna framework" in messages):
         found.append("xna40")
-    if re.search(r"(?:vcruntime140|msvcp140|msvcr120|msvcr110)\.dll", messages):
+    if re.search(r"(?:vcruntime140|msvcp140)\.dll", messages):
         found.append("vcrun2019")
     if re.search(r"d3dx9_\d+\.dll", messages):
         found.append("d3dx9")
@@ -89,13 +91,26 @@ def installer_name(exe_path):
     return any(name.startswith(p) for p in patterns)
 
 
+def _valid_mono_installer(path):
+    """Verify the official Wine Mono release SHA-256 before running the MSI."""
+    if not path.is_file():
+        return False
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for part in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(part)
+    return digest.hexdigest() == MONO_SHA256
+
+
 def download_mono():
     cache = Path.home() / ".cache" / "mada-universal-games"
     cache.mkdir(parents=True, exist_ok=True)
     target = cache / MONO_FILE
-    if target.exists() and target.stat().st_size > 1_000_000:
-        print(f"Using cached Wine Mono installer: {target}", flush=True)
+    if _valid_mono_installer(target):
+        print(f"Using verified Wine Mono installer: {target}", flush=True)
         return target
+    if target.exists():
+        target.unlink()
     partial = cache / (MONO_FILE + ".part")
     print(f"Downloading Wine Mono {MONO_VERSION} from WineHQ...", flush=True)
     try:
@@ -114,8 +129,8 @@ def download_mono():
                 out.write(chunk)
                 if total % (20 * 1024 * 1024) < len(chunk):
                     print(f"Downloaded {total // 1048576} MiB", flush=True)
-        if partial.stat().st_size < 1_000_000:
-            raise RuntimeError("Download is unexpectedly small.")
+        if not _valid_mono_installer(partial):
+            raise RuntimeError("Wine Mono installer SHA-256 mismatch: download rejected.")
         partial.replace(target)
     except Exception:
         partial.unlink(missing_ok=True)
