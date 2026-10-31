@@ -420,6 +420,7 @@ class Launcher(QMainWindow):
         dialog = QDialog(self)
         dialog.setWindowTitle(self.tr("متطلبات اللعبة", "Game requirements"))
         dialog.resize(740, 550)
+        dialog.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
         layout = QVBoxLayout(dialog)
         hints = requirements.diagnose(
             game["exe"], LOGS / (game["id"] + ".log")
