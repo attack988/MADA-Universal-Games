@@ -8,6 +8,7 @@ DIR="$HOME/.local/share/mada-universal-games"
 mkdir -p "$DIR" "$HOME/.local/share/applications"
 
 cp "$(dirname "$0")/mada_games.py" "$DIR/mada_games.py"
+cp "$(dirname "$0")/mada_requirements.py" "$DIR/mada_requirements.py"
 
 cat > "$DIR/run.sh" <<'RUN'
 #!/usr/bin/env bash
