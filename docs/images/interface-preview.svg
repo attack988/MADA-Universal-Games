@@ -1,17 +1,89 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="t d">
-<title id="t">MADA Universal Games interface illustration</title><desc id="d">Conceptual illustration based on the launcher user interface; not a real screenshot.</desc>
-<rect width="1200" height="720" fill="#0b1020"/><rect x="38" y="40" width="1124" height="624" rx="22" fill="#101522" stroke="#415479" stroke-width="3"/>
-<rect x="38" y="40" width="1124" height="48" rx="22" fill="#1b263c"/><rect x="38" y="66" width="1124" height="23" fill="#1b263c"/><circle cx="75" cy="64" r="8" fill="#ee6b74"/><circle cx="102" cy="64" r="8" fill="#e9c16d"/><circle cx="129" cy="64" r="8" fill="#7dd7a7"/><text x="592" y="71" font-family="DejaVu Sans,Arial" font-size="16" text-anchor="middle" fill="#bcd0f1">MADA Universal Games v2</text>
-<text x="87" y="150" font-family="DejaVu Sans,Arial" font-size="30" font-weight="700" fill="#91b7ff">MADA / UNIVERSAL GAMES</text><rect x="988" y="110" width="118" height="49" rx="10" fill="#263653" stroke="#425478"/><text x="1048" y="141" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="20" fill="#fff">English</text>
-<text x="87" y="186" font-family="DejaVu Sans,Arial" font-size="19" fill="#d3deef">Windows game library for Ubuntu • Wine</text>
-<rect x="84" y="214" width="1032" height="190" rx="14" fill="#182238" stroke="#34435e"/><rect x="105" y="237" width="990" height="58" rx="10" fill="#355d9f"/><text x="129" y="273" font-family="DejaVu Sans,Arial" font-size="22" fill="#fff">Example Game</text><text x="129" y="339" font-family="DejaVu Sans,Arial" font-size="20" fill="#b8cce6">Your game library appears here</text>
-<text x="88" y="442" font-family="DejaVu Sans,Arial" font-size="17" fill="#abc2e4">/home/ubuntu/Games/ExampleGame/Game.exe</text>
-<g font-family="DejaVu Sans,Arial" font-size="19" fill="#eff4ff" text-anchor="middle">
-<rect x="84" y="467" width="326" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="247" y="501">Add EXE</text>
-<rect x="437" y="467" width="326" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="600" y="501">Add folder</text>
-<rect x="790" y="467" width="326" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="953" y="501">Import archive</text>
-<rect x="84" y="537" width="238" height="56" rx="10" fill="#3563a4"/><text x="203" y="571">Play</text>
-<rect x="342" y="537" width="238" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="461" y="571">Wine settings</text>
-<rect x="600" y="537" width="238" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="719" y="571">Launch options</text>
-<rect x="858" y="537" width="258" height="56" rx="10" fill="#263653" stroke="#496895"/><text x="987" y="571">Game logs</text></g>
-<text x="604" y="696" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="17" fill="#9ab0ce">Illustrative preview — not a captured application screenshot</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">MADA Universe Games v3 interface concept</title>
+<desc id="desc">Illustrative mockup, not an actual screenshot. New game art cards, sidebar, selected game, focus options, and tools.</desc>
+<defs>
+  <linearGradient id="window" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#0f1830"/><stop offset="1" stop-color="#090f1d"/></linearGradient>
+  <linearGradient id="hero" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#303b73"/><stop offset="0.55" stop-color="#1c2955"/><stop offset="1" stop-color="#183c46"/></linearGradient>
+  <linearGradient id="art1" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#7466f3"/><stop offset="1" stop-color="#191b47"/></linearGradient>
+  <linearGradient id="art2" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#21a1a4"/><stop offset="1" stop-color="#182b45"/></linearGradient>
+  <linearGradient id="button" x1="0" x2="1"><stop stop-color="#77f3dd"/><stop offset="1" stop-color="#65c5d9"/></linearGradient>
+  <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000" flood-opacity=".35"/></filter>
+</defs>
+<rect width="1200" height="720" fill="#070c18"/>
+<circle cx="1070" cy="80" r="240" fill="#293074" opacity=".13"/>
+<circle cx="120" cy="655" r="270" fill="#1ba9ad" opacity=".08"/>
+<rect x="35" y="31" width="1130" height="647" rx="22" fill="url(#window)" stroke="#344365" stroke-width="2" filter="url(#shadow)"/>
+<rect x="35" y="31" width="1130" height="48" rx="22" fill="#152039"/>
+<rect x="35" y="61" width="1130" height="18" fill="#152039"/>
+<g><circle cx="64" cy="55" r="7" fill="#fb6c85"/><circle cx="88" cy="55" r="7" fill="#ecc478"/><circle cx="112" cy="55" r="7" fill="#7ddbb0"/></g>
+<text x="600" y="59" fill="#c5d2ed" text-anchor="middle" font-family="DejaVu Sans,Arial,sans-serif" font-size="15" font-weight="700">MADA Universe Games 3.0</text>
+<rect x="52" y="94" width="300" height="565" rx="19" fill="#141e31" stroke="#2d3e5c"/>
+<g font-family="DejaVu Sans,Arial,sans-serif">
+<text x="77" y="134" fill="#a7aaff" font-size="21" font-weight="900">MADA / UNIVERSE</text>
+<text x="77" y="159" fill="#a8b8d0" font-size="12">Your adventures, one place</text>
+<text x="77" y="209" fill="#f4f6ff" font-size="17" font-weight="800">GAME LIBRARY</text>
+<rect x="76" y="224" width="252" height="44" rx="11" fill="#202e48" stroke="#486183"/>
+<text x="95" y="252" fill="#9cb1d2" font-size="14">⌕  Search your games...</text>
+<rect x="76" y="280" width="252" height="39" rx="10" fill="#1a2b47" stroke="#435c7d"/>
+<text x="95" y="305" fill="#d8e5ff" font-size="13">☆ Favorites only</text>
+<rect x="76" y="330" width="252" height="198" rx="15" fill="#0f192c" stroke="#314362"/>
+<rect x="85" y="340" width="234" height="84" rx="12" fill="#344d86" stroke="#7999ee"/>
+<rect x="94" y="349" width="66" height="66" rx="9" fill="url(#art1)"/>
+<text x="127" y="389" fill="#fff" font-size="22" font-weight="800" text-anchor="middle">TG</text>
+<text x="170" y="374" fill="#fff" font-size="14" font-weight="800">Terraria</text>
+<text x="170" y="396" fill="#c2d1f1" font-size="11">Adventure / RPG</text>
+<rect x="85" y="432" width="234" height="84" rx="12" fill="#1e304c"/>
+<rect x="94" y="441" width="66" height="66" rx="9" fill="url(#art2)"/>
+<text x="127" y="481" fill="#fff" font-size="24" font-weight="800" text-anchor="middle">T</text>
+<text x="170" y="468" fill="#f3f6ff" font-size="14" font-weight="800">Turmoil</text>
+<text x="170" y="489" fill="#a9bdd6" font-size="11">Strategy</text>
+<text x="77" y="554" fill="#99aeca" font-size="12">2 games shown</text>
+<rect x="76" y="567" width="152" height="40" rx="10" fill="url(#button)"/>
+<text x="152" y="593" fill="#0a2630" font-size="13" text-anchor="middle" font-weight="800">+ Add game</text>
+<rect x="238" y="567" width="90" height="40" rx="10" fill="#243752" stroke="#466080"/>
+<text x="283" y="593" fill="#e7f2ff" font-size="13" text-anchor="middle">Folder</text>
+<rect x="76" y="615" width="252" height="29" rx="8" fill="#21334f"/>
+<text x="202" y="635" fill="#d2e0f7" font-size="12" text-anchor="middle">Import ZIP / RAR / 7Z</text>
+<text x="390" y="113" fill="#83dedc" font-size="12" font-weight="800">MADA GAME UNIVERSE</text>
+<text x="390" y="153" fill="#f8f9ff" font-size="29" font-weight="900">Ready to play?</text>
+<rect x="1034" y="110" width="99" height="38" rx="11" fill="#233551" stroke="#4a6284"/>
+<text x="1083" y="134" fill="#dce7fc" font-size="13" text-anchor="middle">English</text>
+<rect x="390" y="169" width="746" height="246" rx="20" fill="url(#hero)" stroke="#526499"/>
+<rect x="412" y="190" width="165" height="199" rx="15" fill="url(#art1)"/>
+<circle cx="550" cy="224" r="97" fill="none" stroke="#c9bbff" stroke-opacity=".16" stroke-width="26"/>
+<circle cx="436" cy="367" r="82" fill="none" stroke="#b0a2ff" stroke-opacity=".16" stroke-width="20"/>
+<text x="494" y="300" fill="#fff" font-size="58" font-weight="900" text-anchor="middle">TG</text>
+<text x="604" y="216" fill="#95ebe3" font-size="12" font-weight="800">✦ SELECTED GAME</text>
+<text x="603" y="258" fill="#fff" font-size="33" font-weight="900">Terraria</text>
+<text x="604" y="286" fill="#cfdef4" font-size="12">/home/user/Games/Terraria/Terraria.exe</text>
+<circle cx="610" cy="312" r="5" fill="#71edc6"/>
+<text x="625" y="317" fill="#a6f4de" font-size="13">Focus fix enabled</text>
+<rect x="604" y="343" width="391" height="45" rx="12" fill="url(#button)"/>
+<text x="799" y="372" fill="#092636" font-size="18" text-anchor="middle" font-weight="900">▶ PLAY GAME</text>
+<rect x="1006" y="343" width="100" height="45" rx="12" fill="#2b426c" stroke="#5f7aa4"/>
+<text x="1056" y="373" fill="#f1f6ff" font-size="27" text-anchor="middle">☆</text>
+<rect x="390" y="429" width="746" height="136" rx="18" fill="#16233a" stroke="#2b4163"/>
+<text x="413" y="455" fill="#eef2ff" font-size="17" font-weight="800">INPUT &amp; ALT-TAB FOCUS</text>
+<text x="413" y="475" fill="#9fb5d3" font-size="12">Set each game's control profile independently</text>
+<g fill="#dfeafd" font-size="13">
+<rect x="415" y="491" width="17" height="17" rx="4" fill="#73ded1"/>
+<path d="M419 499l4 4 6-8" fill="none" stroke="#0d2b36" stroke-width="2"/>
+<text x="441" y="504">Fix lost focus automatically</text>
+<rect x="733" y="491" width="17" height="17" rx="4" fill="#263950" stroke="#58749b"/>
+<text x="759" y="504">Wine virtual desktop</text>
+<rect x="415" y="525" width="17" height="17" rx="4" fill="#263950" stroke="#58749b"/>
+<text x="441" y="538">Prefer X11 / XWayland</text>
+<rect x="804" y="519" width="302" height="35" rx="10" fill="#253650" stroke="#47618a"/>
+<text x="954" y="541" text-anchor="middle" fill="#deebfb">Resolution: 1600 × 900</text>
+</g>
+<rect x="390" y="579" width="746" height="80" rx="18" fill="#16233a" stroke="#2b4163"/>
+<text x="413" y="604" fill="#eef2ff" font-size="16" font-weight="800">GAME TOOLS</text>
+<rect x="413" y="614" width="208" height="32" rx="8" fill="#283c60"/>
+<rect x="632" y="614" width="205" height="32" rx="8" fill="#283c60"/>
+<rect x="848" y="614" width="261" height="32" rx="8" fill="#283c60"/>
+<text x="517" y="635" fill="#e1ebfd" font-size="12" text-anchor="middle">Repair requirements</text>
+<text x="735" y="635" fill="#e1ebfd" font-size="12" text-anchor="middle">Wine settings</text>
+<text x="977" y="635" fill="#e1ebfd" font-size="12" text-anchor="middle">Logs &amp; launch options</text>
+</g>
+<text x="600" y="700" fill="#8298b7" font-family="DejaVu Sans,Arial,sans-serif" font-size="12" text-anchor="middle">Illustrative preview — the real launcher displays games on your computer</text>
+</svg>
