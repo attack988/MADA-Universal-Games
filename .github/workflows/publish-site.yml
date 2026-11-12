@@ -1,4 +1,4 @@
-name: Publish MADA project websites
+name: Publish MADA Games website
 
 on:
   push:
@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   publish:
-    name: Publish Games and Anywhere pages
+    name: Publish Games page
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -27,15 +27,13 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-      - name: Verify both landing pages
+      - name: Verify Games landing page
         shell: bash
         run: |
           test -s docs/index.html
-          test -s docs/anywhere/index.html
-          test -s docs/anywhere/preview.svg
           test -s docs/site.css
           test -s docs/images/interface-preview.svg
-          echo "Games and Anywhere website files are ready."
+          echo "MADA Games website files are ready."
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages site
