@@ -11,6 +11,9 @@ from pathlib import Path
 import mada_requirements as requirements
 
 from PyQt6.QtCore import Qt, QProcess, QTimer
+from PyQt6.QtGui import QPixmap
+from mada_launch import build_launch_command, build_launch_environment
+from mada_ui import render_launcher, make_cover
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -72,139 +75,7 @@ class Launcher(QMainWindow):
                 self.save()
 
     def render(self):
-        arabic = self.db["language"] == "ar"
-        QApplication.instance().setLayoutDirection(
-            Qt.LayoutDirection.RightToLeft if arabic
-            else Qt.LayoutDirection.LeftToRight
-        )
-        self.setWindowTitle("MADA Universal Games v2.1")
-        self.setMinimumSize(950, 660)
-
-        root = QWidget()
-        layout = QVBoxLayout(root)
-        layout.setSpacing(14)
-        layout.setContentsMargins(25, 22, 25, 22)
-
-        header = QHBoxLayout()
-        title = QLabel("MADA  /  UNIVERSAL GAMES")
-        title.setObjectName("title")
-        header.addWidget(title, 1)
-
-        language = QComboBox()
-        language.addItem("العربية", "ar")
-        language.addItem("English", "en")
-        language.setCurrentIndex(0 if arabic else 1)
-        language.currentIndexChanged.connect(
-            lambda: self.change_language(language.currentData())
-        )
-        header.addWidget(language)
-        layout.addLayout(header)
-
-        subtitle = QLabel(self.tr(
-            "مكتبة ألعاب Windows على Ubuntu • Wine",
-            "Windows game library for Ubuntu • Wine"
-        ))
-        layout.addWidget(subtitle)
-
-        # Keep the requirements action prominent and visible even at minimum width.
-        self.repair_button = QPushButton(self.tr(
-            "🧰 فحص وإصلاح متطلبات اللعبة المحددة",
-            "🧰 Check and repair selected game's requirements"
-        ))
-        self.repair_button.setObjectName("repairButton")
-        self.repair_button.clicked.connect(self.requirements_dialog)
-        layout.addWidget(self.repair_button)
-
-        self.game_list = QListWidget()
-        for game in self.db["games"]:
-            self.game_list.addItem(game["name"])
-        layout.addWidget(self.game_list, 1)
-
-        self.details = QLabel()
-        self.details.setWordWrap(True)
-        self.details.setMinimumHeight(55)
-        self.details.setTextInteractionFlags(
-            Qt.TextInteractionFlag.TextSelectableByMouse
-        )
-        layout.addWidget(self.details)
-
-        self.game_list.currentRowChanged.connect(self.show_details)
-
-        actions = QHBoxLayout()
-        self.add_button(actions, self.tr("إضافة EXE", "Add EXE"), self.add_exe)
-        self.add_button(actions, self.tr("إضافة مجلد", "Add folder"), self.add_folder)
-        self.add_button(actions, self.tr("استيراد RAR/ZIP", "Import archive"), self.add_archive)
-        layout.addLayout(actions)
-
-        actions2 = QHBoxLayout()
-        self.add_button(actions2, self.tr("▶ تشغيل", "▶ Play"), self.play)
-        self.add_button(actions2, self.tr("إعدادات Wine", "Wine settings"), self.wine_settings)
-        self.add_button(actions2, self.tr("خيارات التشغيل", "Launch options"), self.edit_args)
-        self.add_button(actions2, self.tr("سجل الأخطاء", "Game logs"), self.show_log)
-        layout.addLayout(actions2)
-
-        actions3 = QHBoxLayout()
-        self.add_button(actions3, self.tr("فتح ملفات اللعبة", "Open game folder"), self.open_folder)
-        self.add_button(actions3, self.tr("تغيير الاسم", "Rename"), self.rename_game)
-        self.add_button(actions3, self.tr("إزالة من القائمة", "Remove from list"), self.remove_game)
-        layout.addLayout(actions3)
-
-        self.setCentralWidget(root)
-        if self.db["games"]:
-            self.game_list.setCurrentRow(0)
-        else:
-            self.details.setText(self.tr(
-                "أضف لعبتك الأولى للبدء.",
-                "Add your first game to get started."
-            ))
-
-        self.setStyleSheet("""
-            QWidget {
-                background: #101522;
-                color: #ecf0fb;
-                font-size: 14px;
-            }
-            QLabel#title {
-                font-size: 23px;
-                font-weight: 800;
-                color: #91b7ff;
-            }
-            QPushButton {
-                background: #263653;
-                border: 1px solid #425478;
-                padding: 12px;
-                border-radius: 10px;
-                font-weight: 600;
-            }
-            QPushButton:hover { background: #36517f; }
-            QPushButton#repairButton {
-                background: #186554;
-                border: 1px solid #4ec5ab;
-                font-weight: 800;
-                padding: 14px;
-                font-size: 15px;
-            }
-            QPushButton#repairButton:hover { background: #217d69; }
-            QListWidget {
-                background: #182238;
-                border: 1px solid #34435e;
-                border-radius: 12px;
-                padding: 10px;
-                font-size: 16px;
-            }
-            QListWidget::item {
-                padding: 13px;
-                margin: 3px;
-                border-radius: 8px;
-            }
-            QListWidget::item:selected { background: #355d9f; }
-            QComboBox, QLineEdit {
-                background: #202c45;
-                border: 1px solid #435577;
-                border-radius: 7px;
-                padding: 8px;
-            }
-        """)
+        render_launcher(self)
 
     def add_button(self, row, text, handler):
         button = QPushButton(text)
@@ -217,19 +88,111 @@ class Launcher(QMainWindow):
         self.render()
 
     def current(self):
-        row = self.game_list.currentRow()
-        if 0 <= row < len(self.db["games"]):
-            return self.db["games"][row]
-        return None
+        if not hasattr(self, "game_list"):
+            return None
+        item = self.game_list.currentItem()
+        if item is None:
+            return None
+        identifier = item.data(Qt.ItemDataRole.UserRole)
+        return next(
+            (g for g in self.db["games"] if g.get("id") == identifier),
+            None
+        )
 
     def show_details(self, row):
         game = self.current()
-        if game:
-            self.details.setText(
-                game["name"] + "\n" + game["exe"]
+        self._selected_game_id = game.get("id") if game else None
+        active = game is not None
+        self.game_title.setText(
+            game.get("name", "") if game else self.tr(
+                "اختر لعبة من المكتبة", "Choose a game from the library"
             )
+        )
+        self.details.setText(
+            game.get("exe", "") if game else self.tr(
+                "أضف لعبة باستخدام الأزرار في القائمة الجانبية.",
+                "Use the sidebar buttons to add your first game."
+            )
+        )
+        self.cover_label.setPixmap(make_cover(game, 189, 224))
+        if game:
+            focus = self.tr("إصلاح التركيز مفعل", "Focus fix enabled") if game.get(
+                "focus_fix", True
+            ) else self.tr("إصلاح التركيز معطل", "Focus fix disabled")
+            desktop = self.tr(" • سطح مكتب افتراضي", " • Virtual desktop") if game.get(
+                "virtual_desktop", False
+            ) else ""
+            self.focus_status.setText("●  " + focus + desktop)
+            self.fav_button.setText("★" if game.get("favorite") else "☆")
         else:
-            self.details.setText("")
+            self.focus_status.clear()
+            self.fav_button.setText("☆")
+
+        for widget, key, default in (
+            (self.focus_checkbox, "focus_fix", True),
+            (self.desktop_checkbox, "virtual_desktop", False),
+            (self.x11_checkbox, "force_x11", False)
+        ):
+            widget.blockSignals(True)
+            widget.setChecked(bool(game.get(key, default)) if game else False)
+            widget.blockSignals(False)
+            widget.setEnabled(active)
+
+        self.resolution_combo.blockSignals(True)
+        self.resolution_combo.setCurrentText(
+            game.get("desktop_resolution", "1600x900") if game else "1600x900"
+        )
+        self.resolution_combo.blockSignals(False)
+        self.resolution_combo.setEnabled(
+            active and bool(game.get("virtual_desktop", False))
+        )
+        for widget in (
+            self.play_button, self.fav_button, self.rename_button,
+            self.remove_button, *self.game_action_buttons
+        ):
+            widget.setEnabled(active)
+
+    def set_game_setting(self, key, value):
+        if key not in ("focus_fix", "virtual_desktop", "force_x11", "desktop_resolution"):
+            return
+        game = self.current()
+        if game is None:
+            return
+        game[key] = value
+        self.save()
+        self.show_details(self.game_list.currentRow())
+
+    def toggle_favorite(self):
+        game = self.current()
+        if game is None:
+            return
+        game["favorite"] = not game.get("favorite", False)
+        self.save()
+        self.render()
+
+    def set_cover(self):
+        game = self.current()
+        if game is None:
+            return
+        filename, _ = QFileDialog.getOpenFileName(
+            self, self.tr("اختر غلاف اللعبة", "Choose game cover"),
+            str(HOME), "Images (*.png *.jpg *.jpeg *.webp *.bmp)"
+        )
+        if not filename:
+            return
+        image = QPixmap(filename)
+        if image.isNull():
+            self.alert(self.tr("الصورة غير صالحة", "Invalid image file"))
+            return
+        covers = PREFIXES.parent / "covers"
+        covers.mkdir(parents=True, exist_ok=True)
+        destination = covers / (game["id"] + ".png")
+        if not image.save(str(destination), "PNG"):
+            self.alert(self.tr("تعذر حفظ الغلاف", "Could not save the cover"))
+            return
+        game["cover"] = str(destination)
+        self.save()
+        self.render()
 
     def alert(self, message):
         QMessageBox.information(self, "MADA", message)
@@ -386,9 +349,9 @@ class Launcher(QMainWindow):
                           + datetime.now().isoformat(timespec="seconds") + "\n")
                 log.flush()
                 process = subprocess.Popen(
-                    ["wine", str(exe), *arguments],
+                    build_launch_command(game, arguments),
                     cwd=str(exe.parent),
-                    env=self.environment(game),
+                    env=build_launch_environment(self.environment(game), game),
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     start_new_session=True
@@ -630,10 +593,9 @@ class Launcher(QMainWindow):
             text=game["name"]
         )
         if ok and name.strip():
-            row = self.game_list.currentRow()
             game["name"] = name.strip()
             self.save()
-            self.game_list.item(row).setText(name.strip())
+            self.render()
 
     def remove_game(self):
         game = self.current()
@@ -644,10 +606,16 @@ class Launcher(QMainWindow):
             self.tr(
                 "إزالة اللعبة من القائمة فقط؟ لن تُحذف ملفاتها.",
                 "Remove from library? Game files will not be deleted."
-            )
+            ),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
         )
         if answer == QMessageBox.StandardButton.Yes:
-            self.db["games"].pop(self.game_list.currentRow())
+            self.db["games"] = [
+                saved for saved in self.db["games"]
+                if saved.get("id") != game.get("id")
+            ]
+            self._selected_game_id = None
             self.save()
             self.render()
 
