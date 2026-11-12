@@ -9,6 +9,8 @@ mkdir -p "$DIR" "$HOME/.local/share/applications"
 
 cp "$(dirname "$0")/mada_games.py" "$DIR/mada_games.py"
 cp "$(dirname "$0")/mada_requirements.py" "$DIR/mada_requirements.py"
+cp "$(dirname "$0")/mada_ui.py" "$DIR/mada_ui.py"
+cp "$(dirname "$0")/mada_launch.py" "$DIR/mada_launch.py"
 
 cat > "$DIR/run.sh" <<'RUN'
 #!/usr/bin/env bash
@@ -27,4 +29,4 @@ Terminal=false
 Categories=Game;
 DESKTOP
 
-echo "MADA installed successfully."
+echo "MADA Universe Games v3.0 installed successfully."
