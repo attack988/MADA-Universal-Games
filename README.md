@@ -29,6 +29,9 @@ MADA Universal Games is an experimental, open-source-style Python/PyQt6 desktop 
 
 ### Features
 
+- **New v3.0 library design:** large game artwork, elegant dark panels, title/path previews, search, favorites, custom local covers, and clearer tool buttons.
+- **Alt+Tab focus repair:** apply Wine's `UseTakeFocus=N` X11 workaround in the selected game's own Wine prefix before launching. Enabled by default; disabling it resets the value to `Y` on the next launch.
+- **Optional per-game compatibility modes:** Wine virtual desktop (with configurable resolution) and X11/XWayland preference on Wayland sessions. Changes take effect on the next game launch.
 - Switch between Arabic (right-to-left) and English.
 - Add a Windows game by selecting its `.exe` file or folder.
 - Import games from supported `.rar`, `.zip`, and `.7z` archives using `unar`.
@@ -39,7 +42,7 @@ MADA Universal Games is an experimental, open-source-style Python/PyQt6 desktop 
 - Download **Wine Mono from WineHQ** and install it into the selected game's Wine prefix after an explicit confirmation.
 - Optionally install selected Windows runtime components via **Winetricks** (separate package, not installed by default).
 - Detect common redistributable installers accidentally selected as the game executable and warn before adding them.
-- Local library metadata stored in `~/.config/mada-universal-games/library.json`.
+- Local library metadata stored in `~/.config/mada-universal-games/library.json`; chosen covers are saved under `~/.local/share/mada-universal-games/covers/`.
 
 ### Requirements
 
@@ -94,7 +97,7 @@ bash update.sh
 ~/.local/share/mada-universal-games/run.sh
 ```
 
-The updated v2.1 window has a prominent green **🧰 Check and repair selected game's requirements** button directly above the game library. If the button is missing, confirm that the running installation at `~/.local/share/mada-universal-games/mada_games.py` has been refreshed, and close any older app process before restarting.
+In **v3.0**, the left sidebar shows searchable game cards and favorites, while the right panel shows the selected game's cover, **Play**, input-focus controls, and organized repair tools. If the new layout is missing, confirm that `mada_ui.py` and `mada_launch.py` were copied by `update.sh` and close any older launcher process before restarting.
 
 If this is the first installation or required system packages are absent, run `bash install.sh` instead.
 
@@ -102,6 +105,7 @@ This refreshes the installed launcher; game library metadata and existing game f
 
 ### Troubleshooting
 
+- **Mouse or keyboard stops responding after Alt+Tab:** enable **Fix lost focus automatically** for that game (enabled by default) and fully exit/relaunch it. This applies `HKCU\\Software\\Wine\\X11 Driver → UseTakeFocus=N` only to its Wine prefix. If it still happens, try **Run inside a Wine virtual desktop**, or **Prefer X11/XWayland** when running on Wayland, then relaunch. The virtual-desktop option may change fullscreen behavior and might not work for every game; no workaround is universal. [WineHQ discussion](https://bugs.winehq.org/show_bug.cgi?id=57585).
 - **`apt update` fails:** inspect and repair any broken third-party APT repositories first. Do not disable signature verification.
 - **PyQt6 missing:** run the installer again and ensure `python3-pyqt6` is installed.
 - **Wine not installed:** install `wine` from your Ubuntu repository or consult WineHQ for your exact Ubuntu release.
@@ -122,6 +126,9 @@ This refreshes the installed launcher; game library metadata and existing game f
 
 ### المميزات
 
+- **واجهة جديدة في الإصدار 3.0:** بطاقات ألعاب واضحة، وأغلفة جذابة، وبحث سريع، ومفضلة، وغلاف مخصص لكل لعبة، وأزرار مرتبة.
+- **إصلاح فقدان استجابة الفأرة والكيبورد بعد Alt+Tab:** يطبّق إعداد `UseTakeFocus=N` ضمن بيئة Wine الخاصة بكل لعبة قبل تشغيلها. الإصلاح مفعّل افتراضيًا، ويمكن إيقافه وإرجاع القيمة إلى `Y` عند التشغيل التالي.
+- **خيارات توافق مستقلة:** سطح مكتب Wine افتراضي بأحجام مختلفة، وتفضيل X11/XWayland عند توفره. يلزم إغلاق اللعبة ثم إعادة فتحها لتطبيق التغيير.
 - واجهة **عربية وإنجليزية** مع دعم اتجاه القراءة من اليمين لليسار.
 - إضافة لعبة من ملف `EXE` أو من مجلد كامل.
 - استيراد ملفات `RAR` و`ZIP` و`7Z` باستخدام `unar`.
@@ -186,7 +193,7 @@ bash update.sh
 ~/.local/share/mada-universal-games/run.sh
 ```
 
-في إصدار v2.1، يظهر زر أخضر واضح **🧰 فحص وإصلاح متطلبات اللعبة المحددة** أعلى قائمة الألعاب. إذا لم يظهر، تأكد من تحديث النسخة المثبتة وإغلاق النافذة القديمة. إذا كان MADA غير مثبت سابقًا، استخدم `bash install.sh`.
+في إصدار **v3.0**، تظهر مكتبة الألعاب والبحث والمفضلة في الشريط الجانبي، وغلاف اللعبة وزر التشغيل وإصلاح التركيز وأدوات Wine في اللوحة الرئيسية. إذا لم تظهر الواجهة الجديدة، أغلق كل نوافذ MADA القديمة وأعد تنفيذ `bash update.sh`. إذا لم يكن البرنامج مثبتًا، استخدم `bash install.sh`.
 
 لا يُفترض أن يحذف التحديث مكتبة ألعابك؛ ملفاتها وإعداداتها محفوظة خارج مجلد المستودع. يُفضّل نسخ البيانات المهمة احتياطيًا قبل أي تحديث.
 
@@ -198,6 +205,7 @@ bash update.sh
 | مكتبة PyQt6 غير موجودة | أعد التثبيت وتأكد من وجود `python3-pyqt6` |
 | Wine غير مثبت | ثبّته من مستودع Ubuntu أو من تعليمات WineHQ المتوافقة مع إصدارك |
 | اللعبة لا تعمل | افحص سجل الأخطاء ومتطلبات اللعبة ومدى توافقها مع Wine |
+| لا تستجيب الفأرة أو لوحة المفاتيح بعد العودة إلى اللعبة | فعّل **إصلاح فقدان التركيز**، وأغلق اللعبة وأعد تشغيلها. وإن استمرت المشكلة، جرّب **سطح مكتب Wine افتراضي**، ثم خيار **تفضيل X11/XWayland** إذا كان متاحًا. قد تختلف النتيجة باختلاف اللعبة وWine وبيئة سطح المكتب |
 | العربية غير متصلة | ثبّت `fonts-noto-core` وأعد فتح المشغّل؛ هذا لا يصلح الخطوط داخل الألعاب |
 
 ### ملاحظات مهمة
