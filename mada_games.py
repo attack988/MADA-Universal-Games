@@ -620,8 +620,13 @@ class Launcher(QMainWindow):
             self.render()
 
 
-app = QApplication(sys.argv)
-app.setFont(QFont("Noto Sans Arabic", 10))
-window = Launcher()
-window.show()
-sys.exit(app.exec())
+def main():
+    app = QApplication(sys.argv)
+    app.setFont(QFont("Noto Sans Arabic", 10))
+    window = Launcher()
+    window.show()
+    return app.exec()
+
+
+if __name__ == "__main__":
+    sys.exit(main())
