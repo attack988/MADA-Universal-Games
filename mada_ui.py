@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from PyQt6.QtCore import Qt, QSize, QRectF
-from PyQt6.QtGui import QColor, QFont, QIcon, QLinearGradient, QPainter, QPixmap
+from PyQt6.QtGui import QBrush, QColor, QFont, QIcon, QLinearGradient, QPainter, QPixmap
 from PyQt6.QtWidgets import (
     QApplication, QCheckBox, QComboBox, QFrame, QGridLayout, QHBoxLayout,
     QLabel, QLineEdit, QListWidget, QListWidgetItem, QPushButton, QScrollArea,
@@ -41,7 +41,7 @@ def make_cover(game, width=200, height=220):
     gradient.setColorAt(0, QColor(first))
     gradient.setColorAt(1, QColor(last))
     painter.setPen(Qt.PenStyle.NoPen)
-    painter.setBrush(gradient)
+    painter.setBrush(QBrush(gradient))
     painter.drawRoundedRect(QRectF(0, 0, width, height), 17, 17)
 
     painter.setPen(QColor(255, 255, 255, 32))
