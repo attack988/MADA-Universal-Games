@@ -23,14 +23,18 @@ class LaunchProfilesTests(unittest.TestCase):
 
     def test_disable_focus_workaround(self):
         self.game["focus_fix"] = False
-        self.assertEqual(build_launch_command(self.game, []), ["wine", self.game["exe"]])
+        command = build_launch_command(self.game, [])
+        self.assertEqual(command[:2], ["/bin/sh", "-c"])
+        self.assertIn("/d Y /f", command[2])
+        self.assertEqual(command[3:], ["mada-game", "wine", self.game["exe"]])
 
     def test_virtual_desktop(self):
         self.game["virtual_desktop"] = True
         self.game["desktop_resolution"] = "1280x720"
         self.game["focus_fix"] = False
+        command = build_launch_command(self.game, ["-windowed"])
         self.assertEqual(
-            build_launch_command(self.game, ["-windowed"]),
+            command[4:],
             ["wine", "explorer", "/desktop=MADA-abc123xy,1280x720",
              self.game["exe"], "-windowed"]
         )
@@ -39,7 +43,7 @@ class LaunchProfilesTests(unittest.TestCase):
         self.game.update({"virtual_desktop": True, "focus_fix": False,
                           "desktop_resolution": "1600x900; echo BAD",
                           "id": "abc;rm -rf"})
-        self.assertEqual(build_launch_command(self.game, [])[2],
+        self.assertEqual(build_launch_command(self.game, [])[6],
                          "/desktop=MADA-abcrmrf,1600x900")
 
     def test_x11_is_opt_in(self):
