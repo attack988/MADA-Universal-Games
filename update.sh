@@ -9,11 +9,13 @@ if [[ ! -f "$APP_DIR/run.sh" ]]; then
   exit 1
 fi
 
-python3 -m py_compile "$SOURCE_DIR/mada_games.py" "$SOURCE_DIR/mada_requirements.py"
+python3 -m py_compile "$SOURCE_DIR/mada_games.py" "$SOURCE_DIR/mada_requirements.py" "$SOURCE_DIR/mada_ui.py" "$SOURCE_DIR/mada_launch.py"
 install -m 0644 "$SOURCE_DIR/mada_games.py" "$APP_DIR/mada_games.py"
 install -m 0644 "$SOURCE_DIR/mada_requirements.py" "$APP_DIR/mada_requirements.py"
+install -m 0644 "$SOURCE_DIR/mada_ui.py" "$APP_DIR/mada_ui.py"
+install -m 0644 "$SOURCE_DIR/mada_launch.py" "$APP_DIR/mada_launch.py"
 
-echo "MADA Games v2.1 updated successfully."
+echo "MADA Universe Games v3.0 updated successfully."
 echo "Your saved games and Wine environments were not touched."
 echo "Close any running MADA Games windows, then open the app again."
 echo "You can start it with: $APP_DIR/run.sh"
